@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    android:padding="@dimen/dimen_12">
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="@dimen/dimen_100"
+        android:layout_height="@dimen/dimen_100"
+        android:src="@drawable/whatslogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dimen_12"/>
+
+    <TextView
+        android:id="@+id/txtWhats"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/imgLogo"
+        android:text="WhatsApp"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:layout_marginTop="@dimen/dimen_15"
+        android:textSize="@dimen/dimen_45"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/txtValidacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtWhats"
+        android:text="Validação"
+        android:textAlignment="center"
+        android:textColor="@color/colorWhite"
+        android:textSize="@dimen/dimen_25"
+        android:layout_marginTop="@dimen/dimen_20"
+        android:fontFamily="sans-serif-light"
+        android:textStyle="normal"
+        android:textAllCaps="false"/>
+
+    <TextView
+        android:id="@+id/txtTextoValidacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/txtValidacao"
+        android:text="Você recebeu um código de validação SMS."
+        android:textAlignment="center"
+        android:textStyle="normal"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="sans-serif-light"/>
+
+    <EditText
+        android:id="@+id/edtValidatorCode"
+        android:layout_width="120dp"
+        android:layout_height="@dimen/dimen_60"
+        android:layout_below="@id/txtTextoValidacao"
+        android:hint="0-0-0-0"
+        android:textColorHint="@color/colorWhite"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="sans-serif-medium"
+        android:textAlignment="center"
+        android:textSize="@dimen/dimen_25"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dimen_45"
+        android:inputType="number"/>
+
+    <Button
+        android:id="@+id/btnValidar"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dimen_40"
+        android:layout_below="@id/edtValidatorCode"
+        android:layout_marginTop="@dimen/dimen_50"
+        android:text="Validar"
+        android:textAllCaps="true"
+        android:textColor="@color/colorWhite"
+        android:fontFamily="sans-serif-medium"
+        android:background="@drawable/bg_btn_validator_code"
+        android:paddingRight="@dimen/dimen_80"
+        android:paddingLeft="@dimen/dimen_80"
+        android:layout_marginLeft="@dimen/dimen_20"
+        android:layout_marginRight="@dimen/dimen_20"/>
+
+</RelativeLayout>

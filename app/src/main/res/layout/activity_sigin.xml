@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    android:padding="@dimen/dimen_12">
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="@dimen/dimen_100"
+        android:layout_height="@dimen/dimen_100"
+        android:src="@drawable/whatslogo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/dimen_12"/>
+
+    <LinearLayout
+        android:id="@+id/lnlay1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Informe seu nome:"
+            android:textAllCaps="false"
+            android:textSize="@dimen/dimen_15"
+            android:textColor="@color/colorWhite"
+            android:fontFamily="sans-serif-light"/>
+
+        <EditText
+            android:id="@+id/edtName"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_40"
+            android:textAllCaps="false"
+            android:textColor="@color/colorWhite"
+            android:inputType="textCapCharacters"
+            android:layout_marginTop="@dimen/dimen_10"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Número de celular:"
+            android:textAllCaps="false"
+            android:textSize="@dimen/dimen_15"
+            android:textColor="@color/colorWhite"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="@dimen/dimen_12"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="@dimen/dimen_10">
+
+            <EditText
+                android:id="@+id/edtNumberCountryPhone"
+                android:layout_width="@dimen/dimen_50"
+                android:layout_height="@dimen/dimen_42"
+                android:inputType="number"
+                android:hint="+55"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/dimen_20"
+                android:fontFamily="sans-serif-medium"
+                android:textAlignment="center"/>
+
+            <EditText
+                android:id="@+id/edtNumberCel"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dimen_42"
+                android:inputType="number"
+                android:hint="(99) 9 9999-9999"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/dimen_20"
+                android:fontFamily="sans-serif-medium" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSalvar"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_40"
+            android:layout_marginTop="@dimen/dimen_30"
+            android:text="Salvar"
+            android:background="@drawable/bg_btn_salvar"
+            android:textColor="@color/colorWhite"
+            android:textSize="@dimen/dimen_15"
+            android:fontFamily="sans-serif-light"/>
+
+
+    </LinearLayout>
+
+
+</RelativeLayout>

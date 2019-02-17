@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:id="@+id/action_search"
+        android:title="Pesquisar"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="always"/>
+
+    <item android:id="@+id/action_peopleadd"
+        android:title="Adicionar contato"
+        android:orderInCategory="2"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_person_add"/>
+
+    <item android:id="@+id/action_setings"
+        android:title="Configurações"
+        android:orderInCategory="3"
+        app:showAsAction="never"/>
+
+    <item android:id="@+id/action_logout"
+        android:title="Sair"
+        android:orderInCategory="4"
+        app:showAsAction="never"/>
+
+</menu>
