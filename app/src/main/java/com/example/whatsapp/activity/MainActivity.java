@@ -3,7 +3,7 @@ package com.example.whatsapp.activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +16,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.whatsapp.R;
-import com.example.whatsapp.adapter.TabAdapter;
+import com.example.whatsapp.classes.SectionsPageAdapter;
 import com.example.whatsapp.config.configFirebase;
+import com.example.whatsapp.fragments.ContatosFragment;
+import com.example.whatsapp.fragments.ConversasFragment;
 import com.example.whatsapp.helper.Base64EncodeCode;
 import com.example.whatsapp.helper.Logout;
-import com.example.whatsapp.helper.SlindingTabLayout;
 import com.example.whatsapp.helper.ValidaEmail;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -35,9 +36,11 @@ public class MainActivity extends AppCompatActivity {
 
 	private Toolbar toolbar;
 
-	private SlindingTabLayout slidingTabLayout;
-	private ViewPager viewPager;
-
+	//Tabs------------------------------------------
+	private TabLayout tabLayout;
+	private SectionsPageAdapter mSectionPageAdapter;
+	private ViewPager mViewPager;
+	//-----------------------------------------------
 
 	private String emailContato;
 
@@ -47,24 +50,25 @@ public class MainActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		//Toolbar--------------------------------
 		toolbar = findViewById(R.id.mainToolbar);
-
 		toolbar.setTitle("WhatsApp");
 		setSupportActionBar(toolbar);
+		//---------------------------------------
 
-		slidingTabLayout = findViewById(R.id.mainTabs);
-		viewPager        = findViewById(R.id.mainViewPager);
+		mSectionPageAdapter = new SectionsPageAdapter(getSupportFragmentManager());
+		mViewPager = findViewById(R.id.mainViewPager);
+		setupViewPager(mViewPager);
 
-		//Configurar o SlidingTabs
-		slidingTabLayout.setDistributeEvenly(true); //para distribuir as tabs de forma igual
-		//slidingTabLayout.setSelectedIndicatorColors(Color.rgb(255,255,255));
-		slidingTabLayout.setSelectedIndicatorColors(ContextCompat.getColor(this, R.color.colorAccent));
+		tabLayout = findViewById(R.id.mainTabs);
+		tabLayout.setupWithViewPager(mViewPager);
+	}
 
-		//Configurar o adapter para as Tabs
-		TabAdapter tabAdapter = new TabAdapter(getSupportFragmentManager());
-		viewPager.setAdapter(tabAdapter);
-		slidingTabLayout.setViewPager(viewPager);
-
+	private void setupViewPager(ViewPager viewPager){
+		SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
+		adapter.addFragment(new ContatosFragment(),"CONTATOS");
+		adapter.addFragment(new ConversasFragment(),"CONVERSAS");
+		viewPager.setAdapter(adapter);
 	}
 
 	@Override
@@ -101,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
 		//Configuração do Dialog
 		alert.setTitle("Novo contato");
-		//alert.setMessage("E-mail do contato:");
+//		alert.setMessage("");
 		alert.setCancelable(false);
 		alert.setIcon(getResources().getDrawable(R.drawable.ic_person_add_min));
 
@@ -109,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 		edtEmailContato.setHint("E-mail do contato.");
 		edtEmailContato.setHintTextColor(getResources().getColor(R.color.colorWhite));
 		edtEmailContato.setTextColor(getResources().getColor(R.color.colorWhite));
+		edtEmailContato.setTextSize(15);
 		edtEmailContato.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
 		alert.setView(edtEmailContato);
 
