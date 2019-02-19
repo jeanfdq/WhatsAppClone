@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import com.example.whatsapp.R;
 import com.example.whatsapp.config.configFirebase;
+import com.example.whatsapp.helper.Base64EncodeCode;
 import com.example.whatsapp.helper.Domains;
 import com.example.whatsapp.helper.Session;
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
@@ -24,6 +25,7 @@ public class ValidatorCodeActivity extends Activity implements View.OnClickListe
 	private Button btnValida;
 
 	private String userID;
+	private String userEmail;
 
 	//Firebase
 	private FirebaseAuth auth;
@@ -66,8 +68,9 @@ public class ValidatorCodeActivity extends Activity implements View.OnClickListe
 			if (tk == tkInf){
 
 				//Pega o id do user
-				auth = configFirebase.getFirebaseAutenticacao();
-				userID = auth.getUid();
+				auth        = configFirebase.getFirebaseAutenticacao();
+				userEmail   = session.getSession(String.valueOf(Domains.keyPreferences.identificatorUser));
+				userID      = Base64EncodeCode.Encode64(userEmail);
 
 				//atualiza o banco
 				reference = configFirebase.getFirebase().child("Usuarios").child(userID);

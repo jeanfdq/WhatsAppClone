@@ -5,7 +5,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -20,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.whatsapp.R;
 import com.example.whatsapp.config.configFirebase;
+import com.example.whatsapp.helper.Base64EncodeCode;
 import com.example.whatsapp.helper.Domains;
 import com.example.whatsapp.helper.Permissao;
 import com.example.whatsapp.helper.Session;
@@ -28,14 +28,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
-import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.auth.FirebaseAuthRecentLoginRequiredException;
-import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -48,6 +44,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 	private EditText edtEmail, edtSenha;
 	private Button btnLogin;
 	private String numbreCel;
+
+	private String emailUser;
+	private String emailCode64;
 
 	//FirebaseAuth
 	private FirebaseAuth autenticacao;
@@ -74,7 +73,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 		btnLogin = findViewById(R.id.btnLoginLogin);
 
 		btnLogin.setOnClickListener(this);
-
 	}
 
 
@@ -85,75 +83,99 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 		if (id == R.id.btnLoginLogin) {
 
+			loginUser();
 
-			String email = edtEmail.getText().toString().trim();
-			String senha = edtSenha.getText().toString().trim();
+		}
 
-			if (!ValidaEmail.validar(email)) {
-				Toast.makeText(this, "E-mail inválido!", Toast.LENGTH_SHORT).show();
-			} else if (senha.isEmpty()) {
-				Toast.makeText(this, "Informe a senha!", Toast.LENGTH_SHORT).show();
-			} else if (senha.length() < 6) {
-				Toast.makeText(this, "Senha deve conter 6 dígitos!", Toast.LENGTH_SHORT).show();
-			} else {
+	}
 
-				autenticacao = configFirebase.getFirebaseAutenticacao();
-				autenticacao.signInWithEmailAndPassword(email, senha).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-					@Override
-					public void onComplete(Task<AuthResult> task) {
+	public void loginUser(){
 
-						if (task.isSuccessful()) {
+		emailUser = edtEmail.getText().toString().trim();
+		//Códifica o email para base 64 para realizar o login
+		emailCode64 = Base64EncodeCode.Encode64(emailUser);
 
-							reference = configFirebase.getFirebase().child("Usuarios").child(task.getResult().getUser().getUid());
+		String senha = edtSenha.getText().toString().trim();
+
+		if (!ValidaEmail.validar(emailUser)) {
+			Toast.makeText(this, "E-mail inválido!", Toast.LENGTH_SHORT).show();
+		} else if (senha.isEmpty()) {
+			Toast.makeText(this, "Informe a senha!", Toast.LENGTH_SHORT).show();
+		} else if (senha.length() < 6) {
+			Toast.makeText(this, "Senha deve conter 6 dígitos!", Toast.LENGTH_SHORT).show();
+		} else {
+
+			autenticacao = configFirebase.getFirebaseAutenticacao();
+			autenticacao.signInWithEmailAndPassword(emailUser, senha).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+				@Override
+				public void onComplete(Task<AuthResult> task) {
+
+
+					if (task.isSuccessful()) {
+
+						try {
+
+							reference = configFirebase.getFirebase().child("Usuarios").child(emailCode64);
 							reference.addChildEventListener(new ChildEventListener() {
 								@Override
-								public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+								public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-									if (dataSnapshot.getKey().equals("telefone"))
-										numbreCel = dataSnapshot.getValue().toString().trim();
+									if (dataSnapshot == null) {
+										Toast.makeText(LoginActivity.this, "Usuário não encontrado!", Toast.LENGTH_LONG).show();
+									} else {
 
-									if (dataSnapshot.getKey().equals("telefone_valide")) {
-										if (dataSnapshot.getValue().toString().equals("false")) {
-											AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
-											alert.setCancelable(false);
-											alert.setTitle("Código de validação");
-											alert.setIcon(R.drawable.ic_message_green);
-											alert.setMessage("Um SMS será enviado para " + numbreCel);
-											alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialog, int which) {
+										if (dataSnapshot.getKey().equals("telefone"))
+											numbreCel = dataSnapshot.getValue().toString().trim();
+
+										if (dataSnapshot.getKey().equals("telefone_valide")) {
+											if (dataSnapshot.getValue().toString().equals("false")) {
+												AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
+												alert.setCancelable(false);
+												alert.setTitle("Código de validação");
+												alert.setIcon(R.drawable.ic_message_green);
+												alert.setMessage("Um SMS será enviado para " + numbreCel);
+												alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+													@Override
+													public void onClick(DialogInterface dialog, int which) {
 
 
-													boolean enviado = enviaSMS(numbreCel);
+														boolean enviado = enviaSMS(numbreCel);
 
-													if (enviado) {
+														if (enviado) {
 
-														startActivity(new Intent(LoginActivity.this, ValidatorCodeActivity.class));
-														finish();
+															startActivity(new Intent(LoginActivity.this, ValidatorCodeActivity.class));
+															finish();
+														}
+
 													}
+												});
+												AlertDialog dialog = alert.create();
 
-												}
-											});
-											AlertDialog dialog = alert.create();
+												//Colocar um designe no bottao do dialog
+												//										dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+												//											@Override
+												//											public void onShow(DialogInterface dialog) {
+												//												Button positive = ((AlertDialog)dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+												//
+												//												final Drawable positiveD = getResources().getDrawable(R.drawable.bg_btn_validator_code);
+												//												positive.setBackground(positiveD);
+												//												positive.invalidate();
+												//											}
+												//										});
+												dialog.show();
 
-											//Colocar um designe no bottao do dialog
-											//										dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-											//											@Override
-											//											public void onShow(DialogInterface dialog) {
-											//												Button positive = ((AlertDialog)dialog).getButton(DialogInterface.BUTTON_POSITIVE);
-											//
-											//												final Drawable positiveD = getResources().getDrawable(R.drawable.bg_btn_validator_code);
-											//												positive.setBackground(positiveD);
-											//												positive.invalidate();
-											//											}
-											//										});
-											dialog.show();
+												Button bq = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+												bq.setTextColor(Color.parseColor("#000000"));
 
-											Button bq = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-											bq.setTextColor(Color.parseColor("#000000"));
+											} else {
 
-										} else {
-											startActivity(new Intent(LoginActivity.this, MainActivity.class));
+												//Sava o identificador do cliente (e-mail)
+												Session session = new Session(LoginActivity.this);
+												session.setSession(String.valueOf(Domains.keyPreferences.identificatorUser), emailUser);
+
+
+												startActivity(new Intent(LoginActivity.this, MainActivity.class));
+											}
 										}
 									}
 								}
@@ -179,17 +201,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 								}
 							});
 
-						} else {
-
-							Toast.makeText(LoginActivity.this, "Usuário/Senha inválido!", Toast.LENGTH_SHORT).show();
-
+						} catch (DatabaseException e) {
+							Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
 						}
 
+
+					} else {
+
+						Toast.makeText(LoginActivity.this, "Usuário/Senha inválido!", Toast.LENGTH_SHORT).show();
+
 					}
-				});
 
-			}
-
+				}
+			});
 
 		}
 
