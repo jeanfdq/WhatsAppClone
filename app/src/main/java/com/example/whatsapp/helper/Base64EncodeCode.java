@@ -2,6 +2,7 @@ package com.example.whatsapp.helper;
 
 import android.util.Base64;
 
+//para cript em base 64
 public class Base64EncodeCode {
 
 	public static String Encode64(String text){
