@@ -3,9 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.ContatosFragment"
-    android:background="@color/colorPrimary">
+    tools:context=".fragments.ContatosFragment">
 
 
+    <ListView
+        android:id="@+id/frgContatos_lv_contatos"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
 
 </RelativeLayout>

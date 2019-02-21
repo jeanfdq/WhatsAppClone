@@ -22,7 +22,10 @@ import com.example.whatsapp.fragments.ContatosFragment;
 import com.example.whatsapp.fragments.ConversasFragment;
 import com.example.whatsapp.helper.Base64EncodeCode;
 import com.example.whatsapp.helper.Logout;
+import com.example.whatsapp.helper.Session;
 import com.example.whatsapp.helper.ValidaEmail;
+import com.example.whatsapp.models.Contato;
+import com.example.whatsapp.models.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,7 +45,8 @@ public class MainActivity extends AppCompatActivity {
 	private ViewPager mViewPager;
 	//-----------------------------------------------
 
-	private String emailContato;
+	private String emailUser,emailContato;
+	private String identificadorUser;
 
 
 	@Override
@@ -121,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 
-				String emailContato = edtEmailContato.getText().toString();
+				emailContato = edtEmailContato.getText().toString();
+
 				if (emailContato.isEmpty()){
 					Toast.makeText(MainActivity.this, "Informe o e-mail do contato!",Toast.LENGTH_SHORT).show();
 				}else {
@@ -133,23 +138,27 @@ public class MainActivity extends AppCompatActivity {
 
 						referenceFirebase = configFirebase.getFirebase().child("Usuarios").child(emailContato);
 
-						//Vamos realizar uma unica consulta no firebase
+						//Vamos realizar uma unica consulta no firebase (O single não fica escutando o firebase, ou seja, se houver uma mudança o app nao sera notificado
 						referenceFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
 							@Override
 							public void onDataChange(DataSnapshot dataSnapshot) {
 
 								if (dataSnapshot.getValue() != null){
 
-									String emailBDFirebase = dataSnapshot.child("email").getValue().toString().trim();
+									Contato contato = dataSnapshot.getValue(Contato.class);
 
-									auth = configFirebase.getFirebaseAutenticacao();
+									//Recupera o email do user logado
+									Session session = new Session(MainActivity.this);
+									identificadorUser = session.getIdenticadorUser();
 
 									//Verifica se o email digitado é o mesmo e-mail que esta logado
-									if (emailBDFirebase.equals(auth.getCurrentUser().getEmail().trim())){
+									if (emailContato.equals(identificadorUser)){
 										Toast.makeText(MainActivity.this, "Não é possível adicionar seu e-mail como contato!",Toast.LENGTH_SHORT).show();
 									}else{
 
+										contato.gravContato(identificadorUser,emailContato);
 
+										Toast.makeText(MainActivity.this, "Contato adicionado com sucesso!!",Toast.LENGTH_SHORT).show();
 
 									}
 

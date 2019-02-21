@@ -28,6 +28,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,6 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 	//FirebaseAuth
 	private FirebaseAuth autenticacao;
+	private FirebaseUser firebaseUser;
 	//Cria um Listener do Auth
 	private FirebaseAuth.AuthStateListener authListener;
 
@@ -59,6 +61,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 	//Refence do banco do Firebase
 	private DatabaseReference reference;
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -128,7 +135,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 											numbreCel = dataSnapshot.getValue().toString().trim();
 
 										if (dataSnapshot.getKey().equals("telefone_valide")) {
+
+											//Verifica se o celular esta validado
 											if (dataSnapshot.getValue().toString().equals("false")) {
+
 												AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
 												alert.setCancelable(false);
 												alert.setTitle("Código de validação");
@@ -169,10 +179,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 											} else {
 
-												//Sava o identificador do cliente (e-mail)
+												//Sava o identificador do usuário (e-mail)
 												Session session = new Session(LoginActivity.this);
-												session.setSession(String.valueOf(Domains.keyPreferences.identificatorUser), emailUser);
-
+												session.setIdentificadorUser(emailCode64);
 
 												startActivity(new Intent(LoginActivity.this, MainActivity.class));
 											}

@@ -9,6 +9,9 @@ public class Session {
 
 	private final SharedPreferences mSharedPrefences;
 
+	//Chaves Staticas
+	private final String IDENTIFICADOR_USER = "identificadorUsuarioLogado";
+
 	public Session(Context context) {
 
 		this.mSharedPrefences = context.getSharedPreferences(String.valueOf(nameFilePreferences.appWhats), context.MODE_PRIVATE);
@@ -23,5 +26,16 @@ public class Session {
 	public void destroySession(String key){
 		mSharedPrefences.edit().remove(key).commit();
 	}
+
+
+	public void setIdentificadorUser(String identificadorUser){
+		mSharedPrefences.edit().putString(IDENTIFICADOR_USER, identificadorUser.trim()).commit();
+	}
+
+	public String getIdenticadorUser(){
+
+		return mSharedPrefences.getString(IDENTIFICADOR_USER,null);
+	}
+
 
 }

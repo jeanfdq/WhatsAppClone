@@ -144,15 +144,12 @@ public class CreateUserActivity extends AppCompatActivity implements View.OnClic
 								usuario.setId(identificador);
 								usuario.salvarUsuario();
 
-								//Guarda o identificado do usuário na sessao
-								//Sava o identificador do cliente (e-mail)
-								Session session = new Session(CreateUserActivity.this);
-								session.setSession(String.valueOf(Domains.keyPreferences.identificatorUser), edtEmail.getText().toString().trim());
 
 								//Como automaticamente o usuario cadastrado já fica logado no app, vamos fazer o SingOut
 								//autenticacao.signOut(); //foi preciso remover por conta da segurança do firebase
 
 								//Utilizar o finish para encerrar a activity (é executado o destroy do lifecicly)
+
 								finish();
 
 								Toast.makeText(CreateUserActivity.this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
