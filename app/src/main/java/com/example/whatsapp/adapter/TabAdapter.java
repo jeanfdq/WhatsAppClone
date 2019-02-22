@@ -10,7 +10,7 @@ import com.example.whatsapp.fragments.ConversasFragment;
 
 public class TabAdapter extends FragmentStatePagerAdapter {
 
-	String[] titulosAbas = {"CONVERSAS","CONTATOS"};
+	String[] titulosAbas = {"CONVERSAS", "CONTATOS"};
 
 	public TabAdapter(FragmentManager fm) {
 		super(fm);
@@ -21,19 +21,14 @@ public class TabAdapter extends FragmentStatePagerAdapter {
 
 		Fragment fragment = null;
 
-		switch (position){
+		switch (position) {
 
 			case 0:
 				fragment = new ConversasFragment();
 				break;
-
 			case 1:
 				fragment = new ContatosFragment();
 				break;
-
-				default:
-					fragment = new ContatosFragment();
-
 		}
 
 		return fragment;

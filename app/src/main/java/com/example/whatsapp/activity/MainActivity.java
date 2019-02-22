@@ -70,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
 
 	private void setupViewPager(ViewPager viewPager){
 		SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-		adapter.addFragment(new ContatosFragment(),"CONTATOS");
 		adapter.addFragment(new ConversasFragment(),"CONVERSAS");
+		adapter.addFragment(new ContatosFragment(),"CONTATOS");
 		viewPager.setAdapter(adapter);
 	}
 

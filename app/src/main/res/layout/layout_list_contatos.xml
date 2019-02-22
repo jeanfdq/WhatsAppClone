@@ -1,8 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="wrap_content"
+
+<LinearLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:textColor="@color/colorPrimary"
-    android:textSize="@dimen/dimen_15sp"
-    android:fontFamily="sans-serif-medium"
-    android:padding="@dimen/dimen_8"/>
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="@dimen/dimen_5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_account_circle_36"
+            android:layout_gravity="center"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/layout_list_contatos_tv_nome"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/dimen_20sp"
+                android:fontFamily="sans-serif-medium"
+                android:paddingLeft="@dimen/dimen_8"
+                android:text="Jean"/>
+
+            <TextView
+                android:id="@+id/layout_list_contatos_tv_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/dimen_14sp"
+                android:textColor="@color/colorBlack"
+                android:paddingLeft="@dimen/dimen_20"
+                android:fontFamily="sans-serif-medium"
+                android:text="jean@jean.com"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>
+
