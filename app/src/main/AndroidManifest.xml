@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.whatsapp">
 
-    <uses-permission android:name="android.permission.INTERNET "/>
-    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.INTERNET " />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <application
         android:allowBackup="true"
@@ -12,16 +12,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.MainActivity">
-
+        <activity android:name=".activity.ConversasActivity" android:parentActivityName=".activity.MainActivity">
+            <!--por compatibilidade em versão android que não existia o parent activity-->
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                       android:value="com.example.whatsapp.activity.MainActivity"/>
         </activity>
-        <activity android:name=".activity.SinginActivity">
-
-        </activity>
-        <activity android:name=".activity.ValidatorCodeActivity">
-
-        </activity>
-
+        <activity android:name=".activity.MainActivity" />
+        <activity android:name=".activity.SinginActivity" />
+        <activity android:name=".activity.ValidatorCodeActivity" />
         <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,10 +27,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activity.CreateUserActivity">
-
-        </activity>
+        <activity android:name=".activity.CreateUserActivity" />
     </application>
 
 </manifest>

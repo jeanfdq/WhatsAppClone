@@ -25,7 +25,6 @@ import com.example.whatsapp.helper.Logout;
 import com.example.whatsapp.helper.Session;
 import com.example.whatsapp.helper.ValidaEmail;
 import com.example.whatsapp.models.Contato;
-import com.example.whatsapp.models.Usuario;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+
 
 		//Toolbar--------------------------------
 		toolbar = findViewById(R.id.mainToolbar);

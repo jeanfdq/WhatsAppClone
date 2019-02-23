@@ -37,8 +37,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/dimen_14sp"
-                android:textColor="@color/colorBlack"
-                android:paddingLeft="@dimen/dimen_20"
+                android:textColor="@color/colorGray"
+                android:paddingLeft="@dimen/dimen_8"
                 android:fontFamily="sans-serif-medium"
                 android:text="jean@jean.com"/>
 

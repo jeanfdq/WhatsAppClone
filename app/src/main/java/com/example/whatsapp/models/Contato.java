@@ -2,7 +2,6 @@ package com.example.whatsapp.models;
 
 import com.example.whatsapp.config.configFirebase;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
 
 public class Contato {
 

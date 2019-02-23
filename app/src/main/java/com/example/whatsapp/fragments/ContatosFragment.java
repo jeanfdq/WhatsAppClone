@@ -1,17 +1,19 @@
 package com.example.whatsapp.fragments;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.example.whatsapp.R;
+import com.example.whatsapp.activity.ConversasActivity;
 import com.example.whatsapp.adapter.ContatosAdapter;
 import com.example.whatsapp.config.configFirebase;
 import com.example.whatsapp.helper.Session;
@@ -22,7 +24,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 
 /**
@@ -40,7 +41,6 @@ public class ContatosFragment extends Fragment {
 	private DatabaseReference firebaseReference;
 
 	private ValueEventListener listenerContatos;
-
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -90,6 +90,20 @@ public class ContatosFragment extends Fragment {
 		};
 
 
+		listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+				Intent intent = new Intent(getActivity(), ConversasActivity.class);
+
+				Contato contato = lista_contatos.get(position);
+				intent.putExtra("nome",contato.getNome());
+				intent.putExtra("email",contato.getEmail());
+
+				startActivity(intent);
+
+			}
+		});
 
 		return view;
 	}

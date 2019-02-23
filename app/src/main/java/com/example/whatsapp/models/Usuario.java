@@ -5,8 +5,6 @@ import com.example.whatsapp.helper.ValidaEmail;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.Exclude;
 
-import java.util.Date;
-
 public class Usuario {
 
 	private String id;

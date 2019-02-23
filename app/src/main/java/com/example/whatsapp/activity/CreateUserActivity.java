@@ -11,8 +11,6 @@ import android.widget.Toast;
 import com.example.whatsapp.R;
 import com.example.whatsapp.config.configFirebase;
 import com.example.whatsapp.helper.Base64EncodeCode;
-import com.example.whatsapp.helper.Domains;
-import com.example.whatsapp.helper.Session;
 import com.example.whatsapp.models.Usuario;
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;

@@ -58,12 +58,12 @@
             android:id="@+id/btnLoginLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_btn_validator_code"
             android:text="Login"
             android:textColor="@color/colorWhite"
-            android:layout_marginTop="@dimen/dimen_20"
-            android:defaultFocusHighlightEnabled="true"
-            android:textColorHighlight="@color/colorPrimaryDark"/>
+            android:layout_marginTop="@dimen/dimen_55"
+            android:layout_marginHorizontal="@dimen/dimen_55"
+            android:elevation="@dimen/dimen_10"
+            android:background="@drawable/bg_btn_salvar" />
 
         <TextView
             android:id="@+id/txtLoginSigin"

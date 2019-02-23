@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
+
 		//Vamos verificar as permissões necessárias
 		Permissao.validaPermission(1, LoginActivity.this, permissions);
 
@@ -96,7 +97,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
 	}
 
-	public void loginUser(){
+	public void loginUser() {
 
 		emailUser = edtEmail.getText().toString().trim();
 		//Códifica o email para base 64 para realizar o login
@@ -290,6 +291,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 		}
 
 	}
+
 }
 
 
