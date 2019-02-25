@@ -1,5 +1,7 @@
 package com.example.whatsapp.models;
 
+import android.support.annotation.Nullable;
+
 import com.example.whatsapp.config.configFirebase;
 import com.example.whatsapp.helper.ValidaEmail;
 import com.google.firebase.database.DatabaseReference;
@@ -11,20 +13,20 @@ public class Usuario {
 	private String nome;
 	private String email;
 	private String telefone;
-	private String senha;
-	private boolean telefone_valide;
+	private Boolean telefone_valide;
 
 	//por exigencia do Firebase é preciso criar um construtor mesmo q seja vazio
-	public Usuario(){
+	public Usuario() {
 
 	}
 
-	@Exclude //Fazendo isso o firebase não ira salvar a senha no Realtime database
+	//@Exclude //Fazendo isso o firebase não ira salvar a senha no Realtime database
 	public String getId() {
 		return id;
 	}
 
 	public void setId(String id) {
+
 		this.id = id;
 	}
 
@@ -36,9 +38,9 @@ public class Usuario {
 
 		String retorno = "";
 
-		if (nome.equals("")){
+		if (nome.equals("")) {
 			retorno = "Informe o nome!";
-		}else{
+		} else {
 			this.nome = nome;
 		}
 		return retorno;
@@ -59,7 +61,7 @@ public class Usuario {
 		else
 			this.email = "";
 
-		return  isEmailValid;
+		return isEmailValid;
 
 	}
 
@@ -71,26 +73,15 @@ public class Usuario {
 		this.telefone = telefone;
 	}
 
-	@Exclude //Fazendo isso o firebase não ira salvar a senha no Realtime database
-	public String getSenha() {
-		return senha;
-	}
-
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
-
 	public boolean isTelefone_valide() {
 		return telefone_valide;
 	}
 
-	public void setTelefone_valide(boolean telefone_valide) {
+	public void setTelefone_valide(Boolean telefone_valide) {
 		this.telefone_valide = telefone_valide;
 	}
 
-
-
-	public void salvarUsuario(){
+	public void salvarUsuario() {
 		DatabaseReference referenceFirebase = configFirebase.getFirebase();
 		referenceFirebase.child("Usuarios").child(getId()).setValue(this);
 	}

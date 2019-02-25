@@ -2,8 +2,6 @@ package com.example.whatsapp.models;
 
 import com.example.whatsapp.config.configFirebase;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.Exclude;
-import com.google.firebase.database.FirebaseDatabase;
 
 public class Mensagem {
 
@@ -38,11 +36,11 @@ public class Mensagem {
 		this.dateMensagem = dateMensagem;
 	}
 
-	public void salvarMensagem(String Remetente, String Destinatario){
+	public Boolean salvarMensagem(String Remetente, String Destinatario){
 
 		DatabaseReference firebaseReference = configFirebase.getFirebase().child("Mensagem");
 		firebaseReference.child(Remetente).child(Destinatario).push().setValue(this); //é inserido o push para que o android cria um sequence
-
+		return true;
 	}
 
 }

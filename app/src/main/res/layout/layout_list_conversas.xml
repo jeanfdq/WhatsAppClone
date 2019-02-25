@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/dimen_12">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_account_circle_36"
+        android:layout_marginRight="@dimen/dimen_10"
+        android:layout_gravity="center"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/layout_list_conversas_tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Joao"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/dimen_20"
+            android:fontFamily="sans-serif-medium"/>
+        <TextView
+            android:id="@+id/layout_list_conversas_tv_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ola tdo bem"
+            android:textColor="@color/colorGray"
+            android:textSize="@dimen/dimen_12"
+            android:fontFamily="sans-serif-light"
+            android:layout_marginTop="@dimen/dimen_5"/>
+
+    </LinearLayout>
+
+</LinearLayout>

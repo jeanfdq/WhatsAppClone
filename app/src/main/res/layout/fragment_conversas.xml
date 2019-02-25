@@ -5,13 +5,11 @@
     android:layout_height="match_parent"
     tools:context=".fragments.ConversasFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
+        android:id="@+id/frgConversas_lv_conversa"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Conversas"
-        android:textSize="@dimen/dimen_40"
-        android:textColor="@color/colorPrimary"
-        android:gravity="center"/>
+        android:layout_height="match_parent">
+
+    </ListView>
 
 </RelativeLayout>

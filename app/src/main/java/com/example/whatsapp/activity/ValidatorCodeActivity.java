@@ -3,6 +3,8 @@ package com.example.whatsapp.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,32 +12,37 @@ import android.widget.Toast;
 
 import com.example.whatsapp.R;
 import com.example.whatsapp.config.configFirebase;
-import com.example.whatsapp.helper.Base64EncodeCode;
 import com.example.whatsapp.helper.Domains;
 import com.example.whatsapp.helper.Session;
+import com.example.whatsapp.models.Usuario;
 import com.github.rtoshiro.util.format.SimpleMaskFormatter;
 import com.github.rtoshiro.util.format.text.MaskTextWatcher;
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class ValidatorCodeActivity extends Activity implements View.OnClickListener {
 
 	private EditText edtCodeValidator;
 	private Button btnValida;
 
+	private Usuario user;
 	private String userID;
-	private String userEmail;
+	private String userName,userEmail;
 
-	//Firebase
-	private FirebaseAuth auth;
-	private FirebaseDatabase database;
 	private DatabaseReference reference;
+	private ValueEventListener listenerUser;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_validator_code);
+
+		//Pega o email do usuario retornado por parametro
+		Intent intent = getIntent();
+		Bundle parameters = intent.getExtras();
+		userID = parameters.getString("idUser");
 
 		edtCodeValidator    = findViewById(R.id.edtValidatorCode);
 		btnValida           = findViewById(R.id.btnValidar);
@@ -67,14 +74,12 @@ public class ValidatorCodeActivity extends Activity implements View.OnClickListe
 
 			if (tk == tkInf){
 
-				//Pega o id do user
-				auth        = configFirebase.getFirebaseAutenticacao();
-				userEmail   = session.getSession(String.valueOf(Domains.keyPreferences.identificatorUser));
-				userID      = Base64EncodeCode.Encode64(userEmail);
+				//Grava os dados do usuario no sharede
+				GravaUserSession(userID);
 
 				//atualiza o banco
 				reference = configFirebase.getFirebase().child("Usuarios").child(userID);
-				reference.child("telefone_valide").setValue("true");
+				reference.child("telefone_valide").setValue(Boolean.TRUE);
 
 				startActivity(new Intent(ValidatorCodeActivity.this, MainActivity.class));
 				finish();
@@ -84,6 +89,32 @@ public class ValidatorCodeActivity extends Activity implements View.OnClickListe
 			}
 
 		}
+
+	}
+
+	private void GravaUserSession(String userID) {
+
+		//Vamos recuperar os dados do user
+		reference = configFirebase.getFirebase().child("Usuarios").child(userID);
+
+		listenerUser = new ValueEventListener() {
+			@Override
+			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+				user = dataSnapshot.getValue(Usuario.class);
+
+				Session sessionUser = new Session(ValidatorCodeActivity.this);
+				sessionUser.setDadosUser(user.getId(), user.getNome(), user.getEmail(), user.getTelefone());
+			}
+
+			@Override
+			public void onCancelled(@NonNull DatabaseError databaseError) {
+
+			}
+		};
+		reference.addListenerForSingleValueEvent(listenerUser);
+
+
 
 	}
 }

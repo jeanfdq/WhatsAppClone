@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.whatsapp.R;
 import com.example.whatsapp.adapter.MensagemAdapter;
@@ -18,6 +19,7 @@ import com.example.whatsapp.helper.Base64EncodeCode;
 import com.example.whatsapp.helper.Session;
 import com.example.whatsapp.helper.getCurrentDateTime;
 import com.example.whatsapp.models.Mensagem;
+import com.example.whatsapp.models.UltimaConversa;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -38,9 +40,11 @@ public class ConversasActivity extends AppCompatActivity {
 
 	//Dados do Remetente
 	private String identificadorRemetente;
+	private String nomeRemetente;
 
 	//Dados do Destinatário
 	private String identificadorDestinatario;
+	private String nomeDestinatario;
 
 	//Instancia do Firebase
 	private DatabaseReference referenceFirebase;
@@ -62,19 +66,22 @@ public class ConversasActivity extends AppCompatActivity {
 
 			//Coloca o e-mail do detinatario em Base64
 			identificadorDestinatario = Base64EncodeCode.Encode64(emailContato);
+			nomeDestinatario = nomeContato.trim();
 		}
-		//-----------------------------------------
 
-		//Recupera o identificador do usuário logado
+
+		//Recupera os dados do usuário logado
 		Session session = new Session(this);
 		identificadorRemetente = session.getIdenticadorUser();
+		nomeRemetente = session.getNomeUser();
+
 
 		//Mapeando as views---------------------------------
 		toolbar = findViewById(R.id.conversasToolbar);
 		lvMensagem = findViewById(R.id.mensagem_lv);
 		edtMensagem = findViewById(R.id.mensagemEdt);
 		btnMensagem = findViewById(R.id.mensagemImgBtn);
-		//--------------------------------------------------
+
 
 		//Configurando a toolbar----------------------
 		toolbar.setNavigationIcon(R.drawable.ic_action_arrow_left);
@@ -82,7 +89,7 @@ public class ConversasActivity extends AppCompatActivity {
 		toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.colorWhite));
 		toolbar.setTitle(nomeContato);
 		setSupportActionBar(toolbar);
-		//--------------------------------------------
+
 
 		//Monta o ListView das mensagens
 		mensagens = new ArrayList<>();
@@ -104,7 +111,7 @@ public class ConversasActivity extends AppCompatActivity {
 				mensagens.clear();
 				for (DataSnapshot data : dataSnapshot.getChildren()) {
 
-					if (data != null){
+					if (data != null) {
 
 						Mensagem mensagem = data.getValue(Mensagem.class);
 						mensagens.add(mensagem);
@@ -122,15 +129,14 @@ public class ConversasActivity extends AppCompatActivity {
 			}
 		};
 		referenceFirebase.addValueEventListener(listener);
-		//---------------------------------------------------------------------------------
 
 
 		//Botão de envio de mensagem----------------------------------
+
 		btnMensagem.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 
-				//Recuperando a mensagem digitada
 				String textoDigitado = edtMensagem.getText().toString();
 
 				if (!textoDigitado.isEmpty()) {
@@ -141,14 +147,50 @@ public class ConversasActivity extends AppCompatActivity {
 					mensagem.setMensagemEnviada(textoDigitado.trim());
 					mensagem.setDateMensagem(getCurrentDateTime.getDateTime());
 
-					mensagem.salvarMensagem(identificadorRemetente, identificadorDestinatario);
-					mensagem.salvarMensagem(identificadorDestinatario, identificadorRemetente);
-					edtMensagem.setText("");
+					Boolean mensagemRemetenteOK = mensagem.salvarMensagem(identificadorRemetente, identificadorDestinatario);
+
+					if (!mensagemRemetenteOK) {
+						Toast.makeText(ConversasActivity.this, "Problemas ao enviar a mensagem. Tente novamente!", Toast.LENGTH_LONG).show();
+					} else {
+						Boolean mensagemDestinatarioOK = mensagem.salvarMensagem(identificadorDestinatario, identificadorRemetente);
+						if (!mensagemDestinatarioOK) {
+							Toast.makeText(ConversasActivity.this, "Problemas ao enviar a mensagem. Tente novamente!", Toast.LENGTH_LONG).show();
+						} else {
+
+							salvarConversa(identificadorRemetente, nomeRemetente, identificadorDestinatario, nomeDestinatario, textoDigitado);
+							salvarConversa(identificadorDestinatario, nomeDestinatario, identificadorRemetente, nomeRemetente, textoDigitado);
+
+							edtMensagem.setText("");
+
+						}
+					}
+
 				}
 
 			}
 		});
-		//------------------------------------------------------------
+
+	}
+
+	private void salvarConversa(String remetente, String nomeRemetente, String destinatario, String nomeDestinatario, String mensagem) {
+
+		try {
+
+			//Model da UltimaConversa--------------------------------------
+			UltimaConversa conversa = new UltimaConversa();
+			conversa.setIdRemetente(remetente);
+			conversa.setNomeRemetente(nomeRemetente);
+			conversa.setIdDestinatario(destinatario);
+			conversa.setNomeDestinatario(nomeDestinatario);
+			conversa.setUltimaConversa(mensagem);
+			conversa.setDataConversa(getCurrentDateTime.getDateTime());
+
+			conversa.salvaUltimaConversa(remetente, destinatario);
+			//--------------------------------------------------------------
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 	}
 

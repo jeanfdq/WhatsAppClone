@@ -73,7 +73,7 @@ public class ContatosFragment extends Fragment {
 
 				lista_contatos.clear();
 
-				for (DataSnapshot dados:dataSnapshot.getChildren()){
+				for (DataSnapshot dados : dataSnapshot.getChildren()) {
 
 					Contato contatos = dados.getValue(Contato.class);
 					lista_contatos.add(contatos);
@@ -97,8 +97,8 @@ public class ContatosFragment extends Fragment {
 				Intent intent = new Intent(getActivity(), ConversasActivity.class);
 
 				Contato contato = lista_contatos.get(position);
-				intent.putExtra("nome",contato.getNome());
-				intent.putExtra("email",contato.getEmail());
+				intent.putExtra("nome", contato.getNome());
+				intent.putExtra("email", contato.getEmail());
 
 				startActivity(intent);
 

@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.SmsManager;
@@ -24,17 +23,16 @@ import com.example.whatsapp.helper.Domains;
 import com.example.whatsapp.helper.Permissao;
 import com.example.whatsapp.helper.Session;
 import com.example.whatsapp.helper.ValidaEmail;
+import com.example.whatsapp.models.Usuario;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -46,20 +44,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 	private Button btnLogin;
 	private String numbreCel;
 
+	private String nomeUser;
 	private String emailUser;
 	private String emailCode64;
 
 	//FirebaseAuth
 	private FirebaseAuth autenticacao;
-	private FirebaseUser firebaseUser;
-	//Cria um Listener do Auth
-	private FirebaseAuth.AuthStateListener authListener;
-
-	//DataBase
-	private FirebaseDatabase database;
 
 	//Refence do banco do Firebase
 	private DatabaseReference reference;
+
+	//Listener do FireBase
+	private ValueEventListener listener;
 
 	@Override
 	protected void onStart() {
@@ -92,7 +88,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 		if (id == R.id.btnLoginLogin) {
 
 			loginUser();
-
 		}
 
 	}
@@ -124,92 +119,81 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 						try {
 
 							reference = configFirebase.getFirebase().child("Usuarios").child(emailCode64);
-							reference.addChildEventListener(new ChildEventListener() {
+
+							listener = new ValueEventListener() {
 								@Override
-								public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-									if (dataSnapshot == null) {
-										Toast.makeText(LoginActivity.this, "Usuário não encontrado!", Toast.LENGTH_LONG).show();
-									} else {
-
-										if (dataSnapshot.getKey().equals("telefone"))
-											numbreCel = dataSnapshot.getValue().toString().trim();
-
-										if (dataSnapshot.getKey().equals("telefone_valide")) {
-
-											//Verifica se o celular esta validado
-											if (dataSnapshot.getValue().toString().equals("false")) {
-
-												AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
-												alert.setCancelable(false);
-												alert.setTitle("Código de validação");
-												alert.setIcon(R.drawable.ic_message_green);
-												alert.setMessage("Um SMS será enviado para " + numbreCel);
-												alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-													@Override
-													public void onClick(DialogInterface dialog, int which) {
+								public void onDataChange(DataSnapshot dataSnapshot) {
 
 
-														boolean enviado = enviaSMS(numbreCel);
+									if (dataSnapshot.getValue() != null) {
 
-														if (enviado) {
+										Usuario user = dataSnapshot.getValue(Usuario.class);
 
-															startActivity(new Intent(LoginActivity.this, ValidatorCodeActivity.class));
-															finish();
-														}
+										if (!user.isTelefone_valide()) {
 
+											numbreCel = user.getTelefone();
+
+											AlertDialog.Builder alert = new AlertDialog.Builder(LoginActivity.this);
+											alert.setCancelable(false);
+											alert.setTitle("Código de validação");
+											alert.setIcon(R.drawable.ic_message_green);
+											alert.setMessage("Um SMS será enviado para " + numbreCel);
+											alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+												@Override
+												public void onClick(DialogInterface dialog, int which) {
+
+
+													Boolean enviado = enviaSMS(numbreCel);
+
+													if (enviado) {
+														Intent intent = new Intent(LoginActivity.this, ValidatorCodeActivity.class);
+														intent.putExtra("idUser", emailCode64);
+														startActivity(intent);
+														finish();
 													}
-												});
-												AlertDialog dialog = alert.create();
 
-												//Colocar um designe no bottao do dialog
-												//										dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-												//											@Override
-												//											public void onShow(DialogInterface dialog) {
-												//												Button positive = ((AlertDialog)dialog).getButton(DialogInterface.BUTTON_POSITIVE);
-												//
-												//												final Drawable positiveD = getResources().getDrawable(R.drawable.bg_btn_validator_code);
-												//												positive.setBackground(positiveD);
-												//												positive.invalidate();
-												//											}
-												//										});
-												dialog.show();
+												}
+											});
+											AlertDialog dialog = alert.create();
 
-												Button bq = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
-												bq.setTextColor(Color.parseColor("#000000"));
+											//Colocar um design no bottao do dialog
+											//										dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+											//											@Override
+											//											public void onShow(DialogInterface dialog) {
+											//												Button positive = ((AlertDialog)dialog).getButton(DialogInterface.BUTTON_POSITIVE);
+											//
+											//												final Drawable positiveD = getResources().getDrawable(R.drawable.bg_btn_validator_code);
+											//												positive.setBackground(positiveD);
+											//												positive.invalidate();
+											//											}
+											//										});
+											dialog.show();
 
-											} else {
+											Button bq = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+											bq.setTextColor(Color.parseColor("#000000"));
 
-												//Sava o identificador do usuário (e-mail)
-												Session session = new Session(LoginActivity.this);
-												session.setIdentificadorUser(emailCode64);
+										} else {
 
-												startActivity(new Intent(LoginActivity.this, MainActivity.class));
-											}
+
+											//Sava o identificador do usuário (e-mail)
+											Session session = new Session(LoginActivity.this);
+											session.setDadosUser(user.getId(), user.getNome().trim(), user.getEmail(), user.getTelefone());
+
+											startActivity(new Intent(LoginActivity.this, MainActivity.class));
 										}
+
+									} else {
+										Toast.makeText(LoginActivity.this, "Usuário não encontrado!", Toast.LENGTH_LONG).show();
 									}
-								}
-
-								@Override
-								public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-								}
-
-								@Override
-								public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-								}
-
-								@Override
-								public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
 								}
 
 								@Override
 								public void onCancelled(@NonNull DatabaseError databaseError) {
 
 								}
-							});
+							};
+							reference.addListenerForSingleValueEvent(listener);
+
 
 						} catch (DatabaseException e) {
 							Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
@@ -219,7 +203,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 					} else {
 
 						Toast.makeText(LoginActivity.this, "Usuário/Senha inválido!", Toast.LENGTH_SHORT).show();
-
 					}
 
 				}

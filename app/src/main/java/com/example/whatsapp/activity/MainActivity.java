@@ -25,7 +25,6 @@ import com.example.whatsapp.helper.Logout;
 import com.example.whatsapp.helper.Session;
 import com.example.whatsapp.helper.ValidaEmail;
 import com.example.whatsapp.models.Contato;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -34,7 +33,6 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
 
 	private DatabaseReference referenceFirebase;
-	private FirebaseAuth auth;
 
 	private Toolbar toolbar;
 
@@ -44,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
 	private ViewPager mViewPager;
 	//-----------------------------------------------
 
-	private String emailUser,emailContato;
+	private String emailContato;
 	private String identificadorUser;
 
 
@@ -66,12 +64,51 @@ public class MainActivity extends AppCompatActivity {
 
 		tabLayout = findViewById(R.id.mainTabs);
 		tabLayout.setupWithViewPager(mViewPager);
+
+//		readData(new FirebaseCallBack() {
+//			@Override
+//			public void onCallBack(String nome) {
+//				test = nome.trim();
+//				Log.d("debugTest","inside_call:" +test);
+//				teste(test);
+//			}
+//		});
+
+
 	}
 
-	private void setupViewPager(ViewPager viewPager){
+//	private void readData(final FirebaseCallBack callBack){
+//
+//		referenceFirebase = configFirebase.getFirebase().child("Usuarios").child("amVhbkBqZWFuLmNvbQ==");
+//		referenceFirebase.addListenerForSingleValueEvent(new ValueEventListener() {
+//			@Override
+//			public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//
+//				Usuario usu = dataSnapshot.getValue(Usuario.class);
+//
+//				emailUser = usu.getEmail();
+//				Log.d("debugTest","inside:" +emailUser);
+//				callBack.onCallBack(emailUser);
+//			}
+//
+//			@Override
+//			public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//			}
+//		});
+//
+//
+//	}
+//
+//	private interface FirebaseCallBack{
+//		void onCallBack(String nome);
+//	}
+
+
+	private void setupViewPager(ViewPager viewPager) {
 		SectionsPageAdapter adapter = new SectionsPageAdapter(getSupportFragmentManager());
-		adapter.addFragment(new ConversasFragment(),"CONVERSAS");
-		adapter.addFragment(new ContatosFragment(),"CONTATOS");
+		adapter.addFragment(new ConversasFragment(), "CONVERSAS");
+		adapter.addFragment(new ContatosFragment(), "CONTATOS");
 		viewPager.setAdapter(adapter);
 	}
 
@@ -127,11 +164,11 @@ public class MainActivity extends AppCompatActivity {
 
 				emailContato = edtEmailContato.getText().toString();
 
-				if (emailContato.isEmpty()){
-					Toast.makeText(MainActivity.this, "Informe o e-mail do contato!",Toast.LENGTH_SHORT).show();
-				}else {
+				if (emailContato.isEmpty()) {
+					Toast.makeText(MainActivity.this, "Informe o e-mail do contato!", Toast.LENGTH_SHORT).show();
+				} else {
 					boolean IsEmailValide = ValidaEmail.validar(emailContato);
-					if (IsEmailValide){
+					if (IsEmailValide) {
 
 						//Vamos verificar se o e-mail digitado está cadastrado na base
 						emailContato = Base64EncodeCode.Encode64(emailContato);
@@ -143,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
 							@Override
 							public void onDataChange(DataSnapshot dataSnapshot) {
 
-								if (dataSnapshot.getValue() != null){
+								if (dataSnapshot.getValue() != null) {
 
 									Contato contato = dataSnapshot.getValue(Contato.class);
 
@@ -152,19 +189,19 @@ public class MainActivity extends AppCompatActivity {
 									identificadorUser = session.getIdenticadorUser();
 
 									//Verifica se o email digitado é o mesmo e-mail que esta logado
-									if (emailContato.equals(identificadorUser)){
-										Toast.makeText(MainActivity.this, "Não é possível adicionar seu e-mail como contato!",Toast.LENGTH_SHORT).show();
-									}else{
+									if (emailContato.equals(identificadorUser)) {
+										Toast.makeText(MainActivity.this, "Não é possível adicionar seu e-mail como contato!", Toast.LENGTH_SHORT).show();
+									} else {
 
-										contato.gravContato(identificadorUser,emailContato);
+										contato.gravContato(identificadorUser, emailContato);
 
-										Toast.makeText(MainActivity.this, "Contato adicionado com sucesso!!",Toast.LENGTH_SHORT).show();
+										Toast.makeText(MainActivity.this, "Contato adicionado com sucesso!!", Toast.LENGTH_SHORT).show();
 
 									}
 
 
-								}else{
-									Toast.makeText(MainActivity.this, "E-mail do contato não cadastrado!",Toast.LENGTH_SHORT).show();
+								} else {
+									Toast.makeText(MainActivity.this, "E-mail do contato não cadastrado!", Toast.LENGTH_SHORT).show();
 								}
 
 							}
@@ -175,8 +212,8 @@ public class MainActivity extends AppCompatActivity {
 							}
 						});
 
-					}else{
-						Toast.makeText(MainActivity.this, "E-mail do contato inválido!",Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(MainActivity.this, "E-mail do contato inválido!", Toast.LENGTH_SHORT).show();
 					}
 
 				}

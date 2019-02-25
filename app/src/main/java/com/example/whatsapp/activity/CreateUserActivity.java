@@ -28,6 +28,9 @@ public class CreateUserActivity extends AppCompatActivity implements View.OnClic
 	//Models
 	private Usuario usuario;
 
+	//Senha é separada pois não contem no model, é gravada apenas no Auth
+	private String password;
+
 	//Firebase
 	private FirebaseAuth autenticacao;
 
@@ -100,7 +103,7 @@ public class CreateUserActivity extends AppCompatActivity implements View.OnClic
 				usuario.setTelefone(xTelefone);
 			}
 
-			String password = edtSenha.getText().toString().trim().replace(" ", "");
+			password = edtSenha.getText().toString().trim().replace(" ", "");
 			if (password.isEmpty()) {
 				Toast.makeText(this, "Informe sua senha de 6 dígitos!", Toast.LENGTH_SHORT).show();
 				isError = true;
@@ -109,8 +112,6 @@ public class CreateUserActivity extends AppCompatActivity implements View.OnClic
 				Toast.makeText(this, "Sua senha deve conter 6 dígitos!", Toast.LENGTH_SHORT).show();
 				isError = true;
 
-			} else {
-				usuario.setSenha(password);
 			}
 
 			if (!isError) {
@@ -128,7 +129,7 @@ public class CreateUserActivity extends AppCompatActivity implements View.OnClic
 
 		autenticacao = configFirebase.getFirebaseAutenticacao();
 
-		autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), usuario.getSenha())
+		autenticacao.createUserWithEmailAndPassword(usuario.getEmail(), password)
 				.addOnCompleteListener(CreateUserActivity.this, new OnCompleteListener<AuthResult>() {
 					@Override
 					public void onComplete(@NonNull Task<AuthResult> task) {
